@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: 1
+  recipe: 1
+  weight_value: 
+  weight_unit: MyString
+  volume_value: 
+  volume_unit: MyString
+
+two:
+  user: 1
+  recipe: 1
+  weight_value: 
+  weight_unit: MyString
+  volume_value: 
+  volume_unit: MyString
