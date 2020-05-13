@@ -3,9 +3,10 @@ Rails.application.routes.draw do
 
   #Routes for users
   get 'users/get_pantry' => 'users#get_pantry'
-  post 'users/add_ingredient' => 'users#add_ingredient'
+  post 'users/add_ingredients' => 'users#add_ingredients'
   delete 'users/remove_ingredient' => 'users#remove_ingredient'
   patch 'users/update_ingredient' => 'users#update_ingredient'
+  get 'users/show_pantry' => 'users#show_pantry'
 
   #Routes for recipes
   post 'recipes/create_with_steps' => 'recipes#create_with_steps'

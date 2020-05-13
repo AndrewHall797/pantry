@@ -19,7 +19,7 @@ class RecipesController < ApplicationController
   end
 
   def update
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
       recipe.update(name: params[:name], time: params[:time], public: params[:public])
       render json: "Success, recipe was updated"
     else
@@ -28,7 +28,7 @@ class RecipesController < ApplicationController
   end
 
   def destroy
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
       recipe.destroy
       render json: "Success, the recipe was deleted"
     else
@@ -56,8 +56,8 @@ class RecipesController < ApplicationController
 
   #adds an ingredient to the recipe
   def add_ingredient
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil
-      if ingredient = Ingredient.find_by(name: params[:name]) == nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
+      if (ingredient = Ingredient.find_by(name: params[:name])) == nil
         ingredient = Ingredient.create(name: params[:name])
       end
       Contain.create(params.permit(:weight_unit, :weight_value, :volume_unit, :volume_value), ingredient_id: ingredient.id, recipe_id: recipe.id)
@@ -69,7 +69,7 @@ class RecipesController < ApplicationController
 
   #removes and ingredient from the recipe
   def remove_ingredient
-    if ingredient = Contain.find_by(recipe_id: params[:recipe_id], ingredient_id: (Ingredient.find_by(name: params[:name])).id) != nil
+    if (ingredient = Contain.find_by(recipe_id: params[:recipe_id], ingredient_id: (Ingredient.find_by(name: params[:name])).id)) != nil
       ingredient.destroy
       render json: "Success, Ingredient removed"
     else
@@ -79,7 +79,7 @@ class RecipesController < ApplicationController
 
   #Adds a step to a recipe
   def add_step
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
       step = Step.new(params.require(:step).permit(:description, :number, :recipe_id))
       Recipe.addStep(recipe, step)
       render json: "Success, step added"
@@ -90,7 +90,7 @@ class RecipesController < ApplicationController
 
   #Sends back all the recipes the user created
   def created_recipes
-    if user = User.find_by(username: params[:username]) != nil
+    if (user = User.find_by(username: params[:username])) != nil
       render json: {created_recipes: User.joins(:recipes).select(:name, :time, :id)}
     else
       render json: "Failure, the user does not exist"
@@ -99,7 +99,7 @@ class RecipesController < ApplicationController
 
   #Sends back all the recipes the user bookmarked
   def bookmarked_recipes
-    if user = User.find_by(username: params[:username]) != nil
+    if (user = User.find_by(username: params[:username])) != nil
       render json: {book_marked: Book_mark.joins(:users, :recipes).select(:name, :time, :recipe_id)}
     else
       render json: "Failure, the user does not exist"
@@ -117,7 +117,7 @@ class RecipesController < ApplicationController
 
   #Update a step in the recipe
   def update_step_description
-    if step = Step.find_by(id: params[:step_id]) != nil
+    if (step = Step.find_by(id: params[:step_id])) != nil
       step.update(description: params[:description])
       render json: "Success, step updated"
     else
@@ -126,7 +126,7 @@ class RecipesController < ApplicationController
   end
 
   def update_step_number
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil and movedStep = Step.find_by(id: params[:step_id]) != nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil and movedStep = Step.find_by(id: params[:step_id]) != nil
       Recipe.updateStepNumber(recipe, movedStep, params[:number])
       render json: "Success, the steps number was updated"
     else
@@ -136,7 +136,7 @@ class RecipesController < ApplicationController
 
   #Get the recipe info and the steps
   def get_recipe_and_steps
-    if recipe = Recipe.find_by(id: params[:recipe_id]) != nil
+    if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
       render json:{recipe: recipe, steps: Step.where("recipe_id = ?", recipe.id) }
     else
       render json: "Failure, recipe does not exist"
