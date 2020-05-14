@@ -1,10 +1,9 @@
 class RecipesController < ApplicationController
 
-  #Create a recipe
+  #Create a recipe, need to list the recipe items and the ingredients in the recipe
   def create
-    recipe = Recipe.new(params.require(:recipe).permit(:name, :time, :public), user_id: (User.find_by(username: params[:username])).id)
-
-    if recipe.save
+    recipeInfo = params[:recipe]
+    if (recipe = Recipe.create(user: User.find_by(username: params[:username]), name: recipeInfo[:name], time: recipeInfo[:time], public: recipeInfo[:public])) != nil
       ingredients = params[:ingredients]
       Recipe.addIngredients(recipe, ingredients)
       render json: "Success, new recipe created"
@@ -20,7 +19,7 @@ class RecipesController < ApplicationController
 
   def update
     if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
-      recipe.update(name: params[:name], time: params[:time], public: params[:public])
+      recipe.update(params.require(:recipe).permit(:name, :time, :public))
       render json: "Success, recipe was updated"
     else
       render json: "Failure, the recipe does not exist"
@@ -46,7 +45,7 @@ class RecipesController < ApplicationController
       #Add steps
       steps = params[:steps]
       steps.each do |step|
-        Step.create(step)
+        Step.create(description: step[1][:description],number: step[1][:number], recipe: recipe)
       end
       render json: "Success"
     else
@@ -80,7 +79,7 @@ class RecipesController < ApplicationController
   #Adds a step to a recipe
   def add_step
     if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
-      step = Step.new(params.require(:step).permit(:description, :number, :recipe_id))
+      step = Step.create(params.require(:step).permit(:description, :number, :recipe_id))
       Recipe.addStep(recipe, step)
       render json: "Success, step added"
     else

@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
   #Routes for users
-  get 'users/get_pantry' => 'users#get_pantry'
   post 'users/add_ingredients' => 'users#add_ingredients'
   delete 'users/remove_ingredient' => 'users#remove_ingredient'
   patch 'users/update_ingredient' => 'users#update_ingredient'

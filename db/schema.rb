@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_045756) do
+ActiveRecord::Schema.define(version: 2020_05_14_041518) do
 
   create_table "book_marks", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "users_id"
-    t.integer "recipes_id"
-    t.index ["recipes_id"], name: "index_book_marks_on_recipes_id"
-    t.index ["users_id"], name: "index_book_marks_on_users_id"
+    t.integer "user_id"
+    t.integer "recipe_id"
+    t.index ["recipe_id"], name: "index_book_marks_on_recipe_id"
+    t.index ["user_id"], name: "index_book_marks_on_user_id"
   end
 
   create_table "contains", force: :cascade do |t|
@@ -28,10 +28,10 @@ ActiveRecord::Schema.define(version: 2020_05_13_045756) do
     t.string "volume_unit"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "recipes_id"
-    t.integer "ingredients_id"
-    t.index ["ingredients_id"], name: "index_contains_on_ingredients_id"
-    t.index ["recipes_id"], name: "index_contains_on_recipes_id"
+    t.integer "recipe_id"
+    t.integer "ingredient_id"
+    t.index ["ingredient_id"], name: "index_contains_on_ingredient_id"
+    t.index ["recipe_id"], name: "index_contains_on_recipe_id"
   end
 
   create_table "ingredients", force: :cascade do |t|
@@ -47,10 +47,10 @@ ActiveRecord::Schema.define(version: 2020_05_13_045756) do
     t.string "volume_unit"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "users_id"
-    t.integer "ingredients_id"
-    t.index ["ingredients_id"], name: "index_owns_on_ingredients_id"
-    t.index ["users_id"], name: "index_owns_on_users_id"
+    t.integer "user_id"
+    t.integer "ingredient_id"
+    t.index ["ingredient_id"], name: "index_owns_on_ingredient_id"
+    t.index ["user_id"], name: "index_owns_on_user_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(version: 2020_05_13_045756) do
     t.boolean "public"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "users_id"
-    t.index ["users_id"], name: "index_recipes_on_users_id"
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_recipes_on_user_id"
   end
 
   create_table "steps", force: :cascade do |t|
@@ -68,8 +68,8 @@ ActiveRecord::Schema.define(version: 2020_05_13_045756) do
     t.integer "number"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "recipes_id"
-    t.index ["recipes_id"], name: "index_steps_on_recipes_id"
+    t.integer "recipe_id"
+    t.index ["recipe_id"], name: "index_steps_on_recipe_id"
   end
 
   create_table "users", force: :cascade do |t|

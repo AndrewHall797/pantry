@@ -11,7 +11,7 @@ class Recipe < ApplicationRecord
   has_many :steps
 
   #Adds a step into a recipe, if it has the same number as an already exising step, it displaces it and all steps after it
-  def addStepIntoRecipe(recipe, step)
+  def self.addStepIntoRecipe(recipe, step)
     steps = Step.where("recipe_id = ?", recipe.id)
 
     steps.each do |step|
@@ -23,7 +23,7 @@ class Recipe < ApplicationRecord
   end
 
   #Moves a step up or down
-  def updateStepNumber(recipe, moveStep, newNum)
+  def self.updateStepNumber(recipe, moveStep, newNum)
     steps = Step.where("recipe_id = ?", recipe.id)
 
     if (newStep.number - newNum) > 0
@@ -43,12 +43,13 @@ class Recipe < ApplicationRecord
   end
 
   #adds a list of ingredients to a recipe
-  def addIngredients(recipe, ingredients)
+  def self.addIngredients(recipe, ingredients)
     ingredients.each do |ingredient|
-      if ing = Ingredient.find_by(name: ingredient[:name]) != nil
-        Contain.create(ingredient_id: ing.id, recipe_id: recipe.id, weight_unit: ingredient[:weight_unit],
-                       weight_value: ingredient[:weight_value], volume_unit: ingredient[:volume_unit], volume_value: ingredient[:volume_value])
+      if (ing = Ingredient.find_by(name: ingredient[1][:name])) == nil
+        ing = Ingredient.create(name: ingredient[1][:name])
       end
+      Contain.create(ingredient: ing, recipe: recipe, weight_unit: ingredient[1][:weight_unit],
+                     weight_value: ingredient[1][:weight_value], volume_unit: ingredient[1][:volume_unit], volume_value: ingredient[1][:volume_value])
     end
   end
 

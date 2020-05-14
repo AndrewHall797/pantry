@@ -25,15 +25,6 @@ class UsersController < ApplicationController
     end
   end
 
-  #Sends back all the ingredients the user has in their pantry
-  def get_pantry
-    if (user = User.find_by(username: params[:username])) != nil
-      render json: {pantry: Own.joins(:ingredients).where("users_id = ?", user.id).select(:name, :weight_value, :weight_unit, :volume_value, :volume_unit)}
-    else
-      render json: "Failure, the user does not exist"
-    end
-  end
-
   #Adds the ingredient to the users pantry.
   def add_ingredients
     if (user = User.find_by(username: params[:username])) != nil
@@ -43,7 +34,7 @@ class UsersController < ApplicationController
         if (ing = Ingredient.find_by(name: ingredient[1][:name])) == nil
           ing = Ingredient.create(name: ingredient[1][:name])
         end
-        Own.create(users_id: user.id, ingredients_id: ing.id, weight_unit: ingredient[1][:weight_unit],
+        own = Own.create(user: user, ingredient: ing, weight_unit: ingredient[1][:weight_unit],
                    weight_value: ingredient[1][:weight_value], volume_unit: ingredient[1][:volume_unit], volume_value: ingredient[1][:volume_value])
       end
       render json: "Success, the ingredients were added"
@@ -54,9 +45,9 @@ class UsersController < ApplicationController
 
   #Removes an ingredient from the users pantry.
   def remove_ingredient
-    if pantry_ingredient = Own.find_by(users_id: User.find_by(username: params[:username]).id, ingredients_id: Ingredient.find_by(name: params[:ingredient])) != nil
+    if (pantry_ingredient = Own.find_by(user_id: User.find_by(username: params[:username]).id, ingredient_id: Ingredient.find_by(name: params[:ingredient]))) != nil
       pantry_ingredient.destroy
-      render "Success, ingredient removed from your pantry"
+      render json: "Success, ingredient removed from your pantry"
     else
       render json: "Failure, you do not have that ingredient"
     end
@@ -64,21 +55,21 @@ class UsersController < ApplicationController
 
   #Updates an ingredient in the users pantry
   def update_ingredient
-    if pantry_ingredient = Own.find_by(users_id: User.find_by(username: params[:username]).id, ingredients_id: Ingredient.find_by(name: params[:ingredient])) != nil
+    if (pantry_ingredient = Own.find_by(user_id: User.find_by(username: params[:username]).id, ingredient_id: Ingredient.find_by(name: params[:ingredient]))) != nil
+      puts pantry_ingredient.id
       pantry_ingredient.update(params.permit(:weight_unit, :weight_value, :volume_unit, :volume_value))
     else
       render json: "Failure, you do not have that ingredient"
     end
   end
 
+  #Sends back all the ingredients the user has in their pantry
   def show_pantry
     if (user = User.find_by(username: params[:username])) != nil
-      render json: {owns: Own.all}
+      render json: {owns: Own.joins(:user, :ingredient).where("user_id = ?", user.id).select(:name, :weight_unit, :weight_value, :volume_unit, :volume_value)}
     else
       render json: "Failure, user does not exist"
     end
   end
-
-
 
 end
