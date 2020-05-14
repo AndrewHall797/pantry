@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+
+  has_secure_password
+
   has_many :owns
   has_many :ingredients, through: :owns
 
