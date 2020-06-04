@@ -36,7 +36,8 @@ class RecipesController < ApplicationController
   end
 
   def create_with_steps
-    recipe = Recipe.new(params.require(:recipe).permit(:name, :time, :public), user_id: (User.find_by(username: params[:username])).id)
+    recipeInfo = params[:recipe]
+    recipe = Recipe.new(user: User.find_by(username: params[:username]), name: recipeInfo[:name], time: recipeInfo[:time], public: recipeInfo[:public])
     if recipe.save
       #Add ingredients
       ingredients = params[:ingredients]
@@ -45,7 +46,8 @@ class RecipesController < ApplicationController
       #Add steps
       steps = params[:steps]
       steps.each do |step|
-        Step.create(description: step[1][:description],number: step[1][:number], recipe: recipe)
+        puts step
+        Step.create(description: step[1][:description],number: step[1][:number])
       end
       render json: "Success"
     else
@@ -54,33 +56,42 @@ class RecipesController < ApplicationController
   end
 
   #adds an ingredient to the recipe
-  def add_ingredient
+  def add_ingredients
     if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
-      if (ingredient = Ingredient.find_by(name: params[:name])) == nil
-        ingredient = Ingredient.create(name: params[:name])
+      ingredients = params[:ingredients]
+      ingredients.each do |ingredient|
+        #If the ingredient is not already in the Ingredient table, add it
+        if (ing = Ingredient.find_by(name: params[:name])) == nil
+          ing = Ingredient.create(name: params[:name])
+        end
+        contain = Contain.create(recipe: recipe, ingredient: ing, weight_unit: ingredient[1][:weight_unit],
+                   weight_value: ingredient[1][:weight_value], volume_unit: ingredient[1][:volume_unit], volume_value: ingredient[1][:volume_value])
       end
-      Contain.create(params.permit(:weight_unit, :weight_value, :volume_unit, :volume_value), ingredient_id: ingredient.id, recipe_id: recipe.id)
-      render json: "Success, ingredient was added"
+      render json: "Success, the ingredients were added"
     else
-      render json: "Failure, recipe does not exist"
+      render json: "Failure, the recipe does not exist"
     end
   end
 
   #removes and ingredient from the recipe
   def remove_ingredient
-    if (ingredient = Contain.find_by(recipe_id: params[:recipe_id], ingredient_id: (Ingredient.find_by(name: params[:name])).id)) != nil
-      ingredient.destroy
+    if (ingredient = Contain.find_by(recipe_id: params[:recipe_id], ingredient_id: (Ingredient.find_by(name: params[:name])).id)) == nil
+      render json: "Failure, the recipe does not have that ingredient"
+    end
+    ingredient.destroy
+    if ingredient.destroyed?
       render json: "Success, Ingredient removed"
     else
-      render json: "Failure, the recipe does not have that ingredient"
+      render json: "Failure, ingredient not destroyed"
     end
   end
 
   #Adds a step to a recipe
   def add_step
     if (recipe = Recipe.find_by(id: params[:recipe_id])) != nil
-      step = Step.create(params.require(:step).permit(:description, :number, :recipe_id))
-      Recipe.addStep(recipe, step)
+      stepInfo = params[:step]
+      step = Step.create(description: stepInfo[:description], number: stepInfo[:number], recipe: recipe)
+      Recipe.addStepIntoRecipe(recipe, step)
       render json: "Success, step added"
     else
       render json: "Failure, recipe does not exist"

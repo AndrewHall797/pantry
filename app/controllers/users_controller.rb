@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   #Removes an ingredient from the users pantry.
   def remove_ingredient
-    if (pantry_ingredient = Own.find_by(user_id: User.find_by(username: params[:username]).id, ingredient_id: Ingredient.find_by(name: params[:ingredient]))) != nil
+    if (pantry_ingredient = Own.find_by(user_id: (User.find_by(username: params[:username])).id, ingredient_id: (Ingredient.find_by(name: params[:ingredient])).id )) != nil
       pantry_ingredient.destroy
       render json: "Success, ingredient removed from your pantry"
     else
@@ -56,7 +56,6 @@ class UsersController < ApplicationController
   #Updates an ingredient in the users pantry
   def update_ingredient
     if (pantry_ingredient = Own.find_by(user_id: User.find_by(username: params[:username]).id, ingredient_id: Ingredient.find_by(name: params[:ingredient]))) != nil
-      puts pantry_ingredient.id
       pantry_ingredient.update(params.permit(:weight_unit, :weight_value, :volume_unit, :volume_value))
     else
       render json: "Failure, you do not have that ingredient"

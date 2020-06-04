@@ -11,12 +11,12 @@ class Recipe < ApplicationRecord
   has_many :steps
 
   #Adds a step into a recipe, if it has the same number as an already exising step, it displaces it and all steps after it
-  def self.addStepIntoRecipe(recipe, step)
+  def self.addStepIntoRecipe(recipe, newStep)
     steps = Step.where("recipe_id = ?", recipe.id)
 
     steps.each do |step|
-      if step.number >= recipe
-        step.update(number: (recipe.number + 1))
+      if (step.number >= newStep.number) and (step.id != newStep)
+        step.update(number: (step.number + 1))
       end
     end
 

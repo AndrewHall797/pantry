@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   #Routes for recipes
   post 'recipes/create_with_steps' => 'recipes#create_with_steps'
-  post 'recipes/add_ingredient' => 'recipes#add_ingredient'
+  post 'recipes/add_ingredients' => 'recipes#add_ingredients'
   delete 'recipes/remove_ingredient' => 'recipes#remove_ingredient'
   post 'recipes/add_step' => 'recipes#add_step'
   get 'recipes/created_recipes' => 'recipes#created_recipes'
